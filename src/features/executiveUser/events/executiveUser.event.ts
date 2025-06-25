@@ -18,7 +18,7 @@ export class entityStateChangedEventHandler implements IEventHandler<entityState
 
 
   async handle(event: entityStateChangedEvent) {
-    await this.nats.publish(RPCServices.Auditlog, Auditlog.ibapUserLogChangedEvent, event.dto)
+    await this.nats.publish(RPCServices.Auditlog, Auditlog.UserLogChangedEvent, event.dto)
   }
 
 }
