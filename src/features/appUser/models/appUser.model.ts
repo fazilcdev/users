@@ -93,7 +93,6 @@ export class AppUser extends AggregateRoot {
     let condition = { code: dto.code, mobileNo: dto.mobileNo };
     let user: any = await this.repos.mobileverificationModel.findOne(condition);
     if (!user) throw new Error('invalid_verification');
-    // console.log("mobileN//////////////////////////////////////////", user.mobileNo);
 
     let authUser = await this.nats.sendSync(
       RPCServices.Auth,

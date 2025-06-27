@@ -24,10 +24,9 @@ import { MongooseModule } from '@nestjs/mongoose';
       useFactory: () => ({
         transport: `${global['config'].SMTP_CONFIG}`,
         defaults: {
-          from: '"sa" <noreply@sasco.com.sa>',
+          from: '',
         },
       }),
-      // transport: 'smtps://apikey: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@smtp.sendgrid.net',
     }),
   ],
   controllers: [],

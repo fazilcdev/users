@@ -65,17 +65,7 @@ export class ExecutiveUser extends AggregateRoot {
 
   async updateRating(dto){
     let user = await this.repos.executiveUserModel.findOne({authUser: dto.authUser})
-    const old_rating = user.rating
-    var total_calls = user.total_calls
-    if(!total_calls) total_calls = 1
-    const new_rating = (((old_rating * total_calls)+dto.rating)/(total_calls + 1)).toFixed(1)
-    const appUser = await this.repos.executiveUserModel.findByIdAndUpdate(user.id, {
-      rating: parseInt(new_rating) ,
-      total_calls: total_calls + 1
-    }, {
-      new: false,
-    });
-    return appUser
+    return user
   }
 
   async update(data: any, tokenUser: any) {
