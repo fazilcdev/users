@@ -23,7 +23,7 @@ export class ExecutiveUser extends AggregateRoot {
       RPCServices.Auth,
       Auth.GetOneAuthUserQuery,
       {
-        condition: { username: data.username },
+        condition: { mobile: data.mobile },
         fieldsMap: {},
       },
     );
@@ -38,7 +38,6 @@ export class ExecutiveUser extends AggregateRoot {
         fId: flakeId(),
         firstName: data.firstName,
         lastName: data.lastName,
-        username: data.username,
         email: data.email,
         mobile: data.mobile,
         password: data.password,

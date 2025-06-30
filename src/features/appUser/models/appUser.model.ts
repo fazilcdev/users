@@ -1,9 +1,10 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { flakeId } from 'chatbuk-common/dist/common/snippets/flake-idgen';
+import { flakeId, generateRandomPassword } from 'chatbuk-common/dist/common/snippets/flake-idgen';
 import { RepositoryCollection } from '../repositories';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Auth } from 'chatbuk-common/dist/services/auth/services';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { extractCountryCode } from 'chatbuk-common/dist/common/snippets/strip-country-code';
 
 export class AppUser extends AggregateRoot {
   id: string;
@@ -22,7 +23,7 @@ export class AppUser extends AggregateRoot {
       RPCServices.Auth,
       Auth.GetOneAuthUserQuery,
       {
-        condition: { username: dto.username },
+        condition: { mobile: dto.mobile },
         fieldsMap: {},
       },
     );
@@ -31,6 +32,7 @@ export class AppUser extends AggregateRoot {
       if(prevUser && prevUser.length > 0)throw new Error('username_already_registered');
     }else{
         // create AuthUser
+      const countryCode = extractCountryCode(dto.mobile)
       authUser = await this.nats.sendSync(
           RPCServices.Auth,
           Auth.CreateAuthUserCommand,
@@ -38,10 +40,10 @@ export class AppUser extends AggregateRoot {
             fId: flakeId(),
             firstName: dto.firstName,
             lastName: dto.lastName,
-            username: dto.username,
             email: dto.email,
             mobile: dto.mobile,
-            password: 'youtik_customer',
+            countryCode: countryCode,
+            password: generateRandomPassword(),
             roles: ['AppUser'],
           },
         );
@@ -112,7 +114,7 @@ export class AppUser extends AggregateRoot {
   }
 
   async generateCustomerCode(){
-    const prefix = "TCUS";
+    const prefix = "CUS";
     const user = await this.repos.appUserModel.findOne().sort({_id: -1})
     var user_code_number = 1;
     var cha = this.makeid(4)

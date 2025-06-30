@@ -22,27 +22,16 @@ export class Mobileverification extends AggregateRoot {
     this.repos = repos;
     this.https = https;
     this.mailer = mailer;
-
   }
 
   async create(dto: any) {
-
     const code = Math.floor(1000 + Math.random() * 9999);
-    const mobileNumber = dto.mobileNo
-    const API_KEY = "3493086c-afe5-11eb-8833-0200cd936042"
-    const url = `https://2factor.in/API/V1/${API_KEY}/SMS/${dto.mobileNo}/${code}`
-    let res = await this.https.request({
-      url: url, 
-      method:'GET'
-    }).toPromise()
-    const smsResp = res.data['Details'];
-
     const verification = await this.repos.mobileverificationModel
       .create({
         fId: flakeId(),
         mobileNo: dto.mobileNo,
         code: code,
-        smsResp: smsResp,
+        smsResp: "",
         email: dto.email,
 
       })
@@ -55,7 +44,7 @@ export class Mobileverification extends AggregateRoot {
 
   async verifyMobile(dto){
     if(dto.code === "1357") return true
-    const resp = await this.repos.mobileverificationModel.find({code: dto.code, mobileNo:dto.username})
+    const resp = await this.repos.mobileverificationModel.find({code: dto.code, mobileNo:dto.mobile})
     if(resp && resp.length>0)return true;
     return false;
   }
