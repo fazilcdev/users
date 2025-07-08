@@ -23,14 +23,12 @@ export class AppUserLoginHandler
         new Mobileverification(this.repos),
     );
     const verified = await mb.verifyMobile(command.dto);
-    console.log('verified', verified)
     if(!verified) throw new Error('invalid_otp')
     const state = await this.nats.sendSync(
         RPCServices.Auth,
         Auth.LoginCommand,
         {...command.dto, password: process.env.SECRET_PASS}
     );
-    console.log(state)
     var customer = await this.repos.appUserModel.findOne({authUser:state.authUser.id})
     return {...state, customer_code:customer.customer_code};
   }
