@@ -1,7 +1,7 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
-import { GqlFieldsmapPopulate } from 'chatbuk-common/dist/common/snippets/gql-fieldsmap-populate';
+import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
+import { GqlFieldsmapPopulate } from 'selfpod-common/dist/common/snippets/gql-fieldsmap-populate';
 
 export class GetOneMobileverificationQuery {
   constructor(
@@ -13,13 +13,13 @@ export class GetOneMobileverificationQuery {
       sort?: any;
       skip: number;
     },
-  ) {}
+  ) { }
 }
 
 @QueryHandler(GetOneMobileverificationQuery)
 export class GetOneMobileverificationHandler
   implements IQueryHandler<GetOneMobileverificationQuery> {
-  constructor(private readonly repos: RepositoryCollection) {}
+  constructor(private readonly repos: RepositoryCollection) { }
 
   async execute(query: GetOneMobileverificationQuery): Promise<any> {
     let qry = this.repos.mobileverificationModel.findOne(

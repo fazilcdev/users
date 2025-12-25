@@ -1,10 +1,10 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { flakeId, generateRandomPassword } from 'chatbuk-common/dist/common/snippets/flake-idgen';
+import { flakeId, generateRandomPassword } from 'selfpod-common/dist/common/snippets/flake-idgen';
 import { RepositoryCollection } from '../repositories';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Auth } from 'chatbuk-common/dist/services/auth/services';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { extractCountryCode } from 'chatbuk-common/dist/common/snippets/strip-country-code';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Auth } from 'selfpod-common/dist/services/auth/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { extractCountryCode } from 'selfpod-common/dist/common/snippets/strip-country-code';
 
 export class AppUser extends AggregateRoot {
   id: string;
@@ -27,30 +27,30 @@ export class AppUser extends AggregateRoot {
         fieldsMap: {},
       },
     );
-    if (authUser){
-      const prevUser = await this.repos.appUserModel.find({authUser: authUser.id})
-      if(prevUser && prevUser.length > 0)throw new Error('username_already_registered');
-    }else{
-        // create AuthUser
+    if (authUser) {
+      const prevUser = await this.repos.appUserModel.find({ authUser: authUser.id })
+      if (prevUser && prevUser.length > 0) throw new Error('username_already_registered');
+    } else {
+      // create AuthUser
       const countryCode = extractCountryCode(dto.mobile)
       authUser = await this.nats.sendSync(
-          RPCServices.Auth,
-          Auth.CreateAuthUserCommand,
-          {
-            fId: flakeId(),
-            firstName: dto.firstName,
-            lastName: dto.lastName,
-            email: dto.email,
-            mobile: dto.mobile,
-            countryCode: countryCode,
-            password: generateRandomPassword(),
-            roles: ['AppUser'],
-          },
-        );
-    } 
+        RPCServices.Auth,
+        Auth.CreateAuthUserCommand,
+        {
+          fId: flakeId(),
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
+          mobile: dto.mobile,
+          countryCode: countryCode,
+          password: generateRandomPassword(),
+          roles: ['AppUser'],
+        },
+      );
+    }
 
     const code = await this.generateCustomerCode()
-    let d = Object.assign({}, dto, { authUser: authUser.id, fId: flakeId(), customer_code:code });
+    let d = Object.assign({}, dto, { authUser: authUser.id, fId: flakeId(), customer_code: code });
     const state = await this.repos.appUserModel.create(d);
     return state;
   }
@@ -113,19 +113,19 @@ export class AppUser extends AggregateRoot {
     return updatedPassword;
   }
 
-  async generateCustomerCode(){
+  async generateCustomerCode() {
     const prefix = "CUS";
-    const user = await this.repos.appUserModel.findOne().sort({_id: -1})
+    const user = await this.repos.appUserModel.findOne().sort({ _id: -1 })
     var user_code_number = 1;
     var cha = this.makeid(4)
-    if(user && user.customer_code){
-      if(user.customer_code.includes("Z")){
+    if (user && user.customer_code) {
+      if (user.customer_code.includes("Z")) {
         user_code_number = parseInt(user.customer_code.split('Z')[1]) + 1
-      }else{
+      } else {
         user_code_number = parseInt(user.customer_code.replace(prefix, '')) + 1
       }
     }
-    return prefix+cha+'Z'+user_code_number
+    return prefix + cha + 'Z' + user_code_number
   }
 
   makeid(length) {

@@ -1,8 +1,8 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
-import { GqlBuildSort } from 'chatbuk-common/dist/common/snippets/gql-build-sort';
-import { GqlFieldsmapPopulate } from 'chatbuk-common/dist/common/snippets/gql-fieldsmap-populate';
+import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
+import { GqlBuildSort } from 'selfpod-common/dist/common/snippets/gql-build-sort';
+import { GqlFieldsmapPopulate } from 'selfpod-common/dist/common/snippets/gql-fieldsmap-populate';
 
 export class GetManyExecutiveUserQuery {
   constructor(

@@ -1,9 +1,9 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { flakeId } from 'chatbuk-common/dist/common/snippets/flake-idgen';
+import { flakeId } from 'selfpod-common/dist/common/snippets/flake-idgen';
 import { RepositoryCollection } from '../repositories';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Auth } from 'chatbuk-common/dist/services/auth/services';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Auth } from 'selfpod-common/dist/services/auth/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
 import { entityStateChangedEvent } from '../events/executiveUser.event';
 
 export class ExecutiveUser extends AggregateRoot {
@@ -45,9 +45,11 @@ export class ExecutiveUser extends AggregateRoot {
       },
     );
 
-    
-    let d = Object.assign({}, data, { authUser: authUser.id,  
-      executive_code, fId: flakeId(), status: data.status});
+
+    let d = Object.assign({}, data, {
+      authUser: authUser.id,
+      executive_code, fId: flakeId(), status: data.status
+    });
     const state = await this.repos.executiveUserModel.create(d);
 
     let auditLog = {
@@ -62,8 +64,8 @@ export class ExecutiveUser extends AggregateRoot {
     return state;
   }
 
-  async updateRating(dto){
-    let user = await this.repos.executiveUserModel.findOne({authUser: dto.authUser})
+  async updateRating(dto) {
+    let user = await this.repos.executiveUserModel.findOne({ authUser: dto.authUser })
     return user
   }
 
@@ -80,7 +82,7 @@ export class ExecutiveUser extends AggregateRoot {
 
 
     let e = Object.assign({}, data, { id: appUser.authUser })
-    
+
     const authUser = await this.nats.sendSync(
       RPCServices.Auth,
       Auth.UpdateAuthUserCommand, e
@@ -90,22 +92,22 @@ export class ExecutiveUser extends AggregateRoot {
 
     let resp = Object.assign({}, appUserJson, { authUser: authUser });
 
-    if(data['from'] == "event"){
+    if (data['from'] == "event") {
 
-    }else{
-      try{
-        const d  = {
-         type: appUser.account_type,
-         status: appUser.status,
-         executiveCode: appUser.executive_code,
-         executiveStatus: appUser.status,
-         og2: 'update-executive'
-       }
-      }catch(e){
+    } else {
+      try {
+        const d = {
+          type: appUser.account_type,
+          status: appUser.status,
+          executiveCode: appUser.executive_code,
+          executiveStatus: appUser.status,
+          og2: 'update-executive'
+        }
+      } catch (e) {
         console.log(e)
       }
     }
-  
+
     resp = await this.repos.executiveUserModel.findById(data.id).populate('authUser');
     return resp;
   }
@@ -122,32 +124,32 @@ export class ExecutiveUser extends AggregateRoot {
     return resp;
   }
 
-  async updateWorkerStatus(data){
+  async updateWorkerStatus(data) {
     const resp = await this.repos.executiveUserModel.findOneAndUpdate(
-        {executive_code: data.executiveCode},
-        { status: data.status },
-        { new: true },
-      );   
-     const state = await this.repos.executiveUserModel.findOne({executive_code: data.executiveCode})
-     try{
-       const d  = {
+      { executive_code: data.executiveCode },
+      { status: data.status },
+      { new: true },
+    );
+    const state = await this.repos.executiveUserModel.findOne({ executive_code: data.executiveCode })
+    try {
+      const d = {
         type: state.account_type,
         status: data.status,
         executiveCode: state.executive_code,
         executiveStatus: data.status,
         og2: 'update-worker'
       }
-     }catch(e){
-       console.log(e)
-     }
-      
+    } catch (e) {
+      console.log(e)
+    }
+
     return state;
   }
 
   async delete(tokenUser: any) {
     const resp = await this.repos.executiveUserModel.findById(this.id)
     await this.repos.executiveUserModel.deleteById(this.id);
-    
+
     let state = await this.repos.executiveUserModel.findOneDeleted({ _id: this.id });
     // TwilioWorkspaceClient
     //              .workers(resp.workerSid)
@@ -200,14 +202,14 @@ export class ExecutiveUser extends AggregateRoot {
     this.apply(new entityStateChangedEvent(data))
   }
 
-  async generateCustomerCode(){
+  async generateCustomerCode() {
     const prefix = "TEXE";
-    const user = await this.repos.executiveUserModel.findOne().sort({_id: -1})
+    const user = await this.repos.executiveUserModel.findOne().sort({ _id: -1 })
     var user_code_number = 1;
-    if(user && user.executive_code){
+    if (user && user.executive_code) {
       user_code_number = parseInt(user.executive_code.replace(prefix, '')) + 1
     }
-    return prefix+Date.now()
-    return prefix+user_code_number
+    return prefix + Date.now()
+    return prefix + user_code_number
   }
 }

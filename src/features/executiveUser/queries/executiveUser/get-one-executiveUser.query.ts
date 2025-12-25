@@ -1,7 +1,7 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
-import { GqlFieldsmapPopulate } from 'chatbuk-common/dist/common/snippets/gql-fieldsmap-populate';
+import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
+import { GqlFieldsmapPopulate } from 'selfpod-common/dist/common/snippets/gql-fieldsmap-populate';
 
 export class GetOneExecutiveUserQuery {
   constructor(
@@ -13,12 +13,12 @@ export class GetOneExecutiveUserQuery {
       sort?: any;
       skip: number;
     },
-  ) {}
+  ) { }
 }
 
 @QueryHandler(GetOneExecutiveUserQuery)
 export class GetOneExecutiveUserHandler implements IQueryHandler<GetOneExecutiveUserQuery> {
-  constructor(private readonly repos: RepositoryCollection) {}
+  constructor(private readonly repos: RepositoryCollection) { }
 
   async execute(query: GetOneExecutiveUserQuery): Promise<any> {
     let qry = this.repos.executiveUserModel.findOne(

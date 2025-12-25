@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
-import { NatsClientService } from "chatbuk-common/dist/common/rpc-clients/nats/nats-client.module";
-import { RPCServices } from "chatbuk-common/dist/services/rpc-services";
-import { Auditlog } from 'chatbuk-common/dist/services/auditlog/services'
+import { NatsClientService } from "selfpod-common/dist/common/rpc-clients/nats/nats-client.module";
+import { RPCServices } from "selfpod-common/dist/services/rpc-services";
+import { Auditlog } from 'selfpod-common/dist/services/auditlog/services'
 
 export class entityStateChangedEvent {
   constructor(
@@ -10,7 +10,7 @@ export class entityStateChangedEvent {
 }
 
 @EventsHandler(entityStateChangedEvent)
-export class entityStateChangedEventHandler implements IEventHandler<entityStateChangedEvent>{
+export class entityStateChangedEventHandler implements IEventHandler<entityStateChangedEvent> {
 
   constructor(
     readonly nats: NatsClientService

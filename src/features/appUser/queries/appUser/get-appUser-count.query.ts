@@ -1,6 +1,6 @@
 import { QueryHandler, IQueryHandler } from "@nestjs/cqrs";
 import { RepositoryCollection } from "../../repositories";
-import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
+import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
 
 export class GetAppUserCountQuery {
   constructor(
@@ -12,12 +12,12 @@ export class GetAppUserCountQuery {
 }
 
 @QueryHandler(GetAppUserCountQuery)
-export class GetAppUserCountHandler implements IQueryHandler<GetAppUserCountQuery>{
+export class GetAppUserCountHandler implements IQueryHandler<GetAppUserCountQuery> {
   constructor(
     private readonly repos: RepositoryCollection
   ) { }
 
-  async  execute(query: GetAppUserCountQuery): Promise<any> {
+  async execute(query: GetAppUserCountQuery): Promise<any> {
     //{ createdAt: query.params.date }
     let condition = Object.assign({}, query.params.condition, { deleted: false }) //
     let count = await this.repos.appUserModel.countDocuments(GqlBuildCondition(condition));

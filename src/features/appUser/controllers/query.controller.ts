@@ -1,8 +1,8 @@
 import { QueryBus } from '@nestjs/cqrs';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Users } from 'chatbuk-common/dist/services/users/services';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Users } from 'selfpod-common/dist/services/users/services';
 import { GetOneAppUserQuery } from '../queries/appUser/get-one-appUser.query';
 import { GetManyAppUserQuery } from '../queries/appUser/get-many-appUsers.query';
 import { GetAppUserCountQuery } from '../queries/appUser/get-appUser-count.query';
@@ -14,11 +14,11 @@ import { GetMobileVerificationsCountQuery } from '../queries/mobileVerification/
 
 @Controller()
 export class QueryController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(private readonly queryBus: QueryBus) { }
 
 
 
-//   // ---------------------------------- User ----------------------------------------------/
+  //   // ---------------------------------- User ----------------------------------------------/
 
   @MessagePattern({ service: RPCServices.Users, cmd: Users.GetOneAppUserQuery })
   async getOneUser(query: any) {
@@ -45,7 +45,7 @@ export class QueryController {
       });
   }
 
-  
 
- 
- }
+
+
+}

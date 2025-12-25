@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Auth } from 'chatbuk-common/dist/services/auth/services';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Auth } from 'selfpod-common/dist/services/auth/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
 import { Mobileverification } from '../../models/mobileverification.model';
 
 export class AppUserLoginCommand {
-  constructor(readonly dto: any) {}
+  constructor(readonly dto: any) { }
 }
 
 @CommandHandler(AppUserLoginCommand)
@@ -16,20 +16,20 @@ export class AppUserLoginHandler
     private readonly publisher: EventPublisher,
     private readonly repos: RepositoryCollection,
     private readonly nats: NatsClientService
-  ) {}
+  ) { }
 
   async execute(command: AppUserLoginCommand): Promise<any> {
     const mb = await this.publisher.mergeObjectContext(
-        new Mobileverification(this.repos),
+      new Mobileverification(this.repos),
     );
     const verified = await mb.verifyMobile(command.dto);
-    if(!verified) throw new Error('invalid_otp')
+    if (!verified) throw new Error('invalid_otp')
     const state = await this.nats.sendSync(
-        RPCServices.Auth,
-        Auth.LoginCommand,
-        {...command.dto, password: process.env.SECRET_PASS}
+      RPCServices.Auth,
+      Auth.LoginCommand,
+      { ...command.dto, password: process.env.SECRET_PASS }
     );
-    var customer = await this.repos.appUserModel.findOne({authUser:state.authUser.id})
-    return {...state, customer_code:customer.customer_code};
+    var customer = await this.repos.appUserModel.findOne({ authUser: state.authUser.id })
+    return { ...state, customer_code: customer.customer_code };
   }
 }

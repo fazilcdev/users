@@ -1,10 +1,10 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-// import { flakeId } from 'savetime-chatbuk-common/dist/common/snippets/flake-idgen';
+// import { flakeId } from 'savetime-selfpod-common/dist/common/snippets/flake-idgen';
 import { RepositoryCollection } from '../repositories';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Auth } from 'chatbuk-common/dist/services/auth/services';
-import { flakeId } from 'chatbuk-common/dist/common/snippets/flake-idgen';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Auth } from 'selfpod-common/dist/services/auth/services';
+import { flakeId } from 'selfpod-common/dist/common/snippets/flake-idgen';
 import { NatsError } from 'nats';
 import { MailerService } from '@nest-modules/mailer';
 import { HttpService } from '@nestjs/axios';
@@ -42,10 +42,10 @@ export class Mobileverification extends AggregateRoot {
     return verification;
   }
 
-  async verifyMobile(dto){
-    if(dto.code === "1357") return true
-    const resp = await this.repos.mobileverificationModel.find({code: dto.code, mobileNo:dto.mobile})
-    if(resp && resp.length>0)return true;
+  async verifyMobile(dto) {
+    if (dto.code === "1357") return true
+    const resp = await this.repos.mobileverificationModel.find({ code: dto.code, mobileNo: dto.mobile })
+    if (resp && resp.length > 0) return true;
     return false;
   }
 

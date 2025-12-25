@@ -1,11 +1,11 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
 // import { AppUser } from '../../models/appUser.model';
 import { ExecutiveUser } from '../../models/executiveUser.model';
 
 export class UpdateExecutiveUserPasswordCommand {
-  constructor(readonly data: any) {}
+  constructor(readonly data: any) { }
 }
 
 @CommandHandler(UpdateExecutiveUserPasswordCommand)
@@ -15,7 +15,7 @@ export class UpdateExecutiveUserPasswordHandler
     private readonly publisher: EventPublisher,
     private readonly repos: RepositoryCollection,
     private readonly nats: NatsClientService,
-  ) {}
+  ) { }
 
   async execute(command: UpdateExecutiveUserPasswordCommand): Promise<any> {
     let u = await this.publisher.mergeObjectContext(new ExecutiveUser(this.repos));

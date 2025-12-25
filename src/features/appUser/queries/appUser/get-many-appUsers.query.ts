@@ -1,10 +1,10 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { GqlFieldsmapPopulate } from 'chatbuk-common/dist/common/snippets/gql-fieldsmap-populate';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Auth } from 'chatbuk-common/dist/services/auth/services';
+import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { GqlFieldsmapPopulate } from 'selfpod-common/dist/common/snippets/gql-fieldsmap-populate';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Auth } from 'selfpod-common/dist/services/auth/services';
 
 export class GetManyAppUserQuery {
   constructor(
@@ -30,23 +30,23 @@ export class GetManyAppUserHandler implements IQueryHandler<GetManyAppUserQuery>
     var condition = query.params.condition
     var customerQueryFound = false
     var customerQuery = {}
-    if(condition && condition.hasOwnProperty('email')){
-      customerQueryFound  = true
-      customerQuery = {email:condition.email}
-      delete condition.email;  
+    if (condition && condition.hasOwnProperty('email')) {
+      customerQueryFound = true
+      customerQuery = { email: condition.email }
+      delete condition.email;
     }
-    if(condition && condition.hasOwnProperty('mobile')){
-      customerQueryFound  = true
-      customerQuery = {...customerQuery, mobile:condition.mobile}
-      delete condition.mobile;  
+    if (condition && condition.hasOwnProperty('mobile')) {
+      customerQueryFound = true
+      customerQuery = { ...customerQuery, mobile: condition.mobile }
+      delete condition.mobile;
     }
-    if(condition && condition.hasOwnProperty('customer')){
-      customerQueryFound  = true
-      customerQuery = {...customerQuery, firstName:condition.customer}
-      delete condition.customer;  
+    if (condition && condition.hasOwnProperty('customer')) {
+      customerQueryFound = true
+      customerQuery = { ...customerQuery, firstName: condition.customer }
+      delete condition.customer;
     }
 
-    if(customerQueryFound){
+    if (customerQueryFound) {
       var userIds = []
       const users = await this.nats.sendSync(
         RPCServices.Auth,
@@ -56,10 +56,10 @@ export class GetManyAppUserHandler implements IQueryHandler<GetManyAppUserQuery>
           fieldsMap: {},
         },
       );
-      for(var i=0; i<users.length; i++){
+      for (var i = 0; i < users.length; i++) {
         userIds.push(users[i].id)
       }
-      condition = {...condition, authUser:{___in:userIds}}
+      condition = { ...condition, authUser: { ___in: userIds } }
     }
 
     let qry = this.repos.appUserModel
