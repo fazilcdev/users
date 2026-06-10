@@ -1,8 +1,8 @@
 import { CommandBus } from '@nestjs/cqrs';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Users } from 'selfpod-common/dist/services/users/services';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Users } from 'chatbuk-common/dist/services/users/services';
 import { DeleteAppUserCommand } from '../commands/appUser/delete-appUser.command';
 import { UpdateAppUserCommand } from '../commands/appUser/update-appUser.command';
 import { CreateAppUserCommand } from '../commands/appUser/create-appUser.command';

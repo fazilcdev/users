@@ -3,14 +3,15 @@ import { CommandHandlers } from './commands';
 import { CqrsModule } from '@nestjs/cqrs';
 import { RepositoryCollection } from './repositories';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ALL_ENTITIES } from 'selfpod-common/dist/services/entities';
+import { ALL_ENTITIES } from 'chatbuk-common/dist/services/entities';
 import { RpcControllers, HttpControllers } from './controllers';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
-import { flakeId } from 'selfpod-common/dist/common/snippets/flake-idgen';
+import { flakeId } from 'chatbuk-common/dist/common/snippets/flake-idgen';
 import { QueryHandlers } from './queries';
 import { HttpModule } from '@nestjs/axios';
+import { EncryptionModule } from 'chatbuk-common/dist/features/encryption/encryption.module';
 
 const MulterM = MulterModule.registerAsync({
   useFactory: () => ({
@@ -38,6 +39,7 @@ const MulterM = MulterModule.registerAsync({
 
 @Module({
   imports: [CqrsModule, MongooseModule.forFeature([...ALL_ENTITIES]), MulterM,
+    EncryptionModule,
     HttpModule.registerAsync({
       useFactory: () => ({
         timeout: 5000,

@@ -1,7 +1,7 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
-import { GqlFieldsmapPopulate } from 'selfpod-common/dist/common/snippets/gql-fieldsmap-populate';
+import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
+import { GqlFieldsmapPopulate } from 'chatbuk-common/dist/common/snippets/gql-fieldsmap-populate';
 
 export class GetOneMobileverificationQuery {
   constructor(

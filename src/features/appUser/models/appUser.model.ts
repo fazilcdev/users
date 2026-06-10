@@ -1,10 +1,10 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { flakeId, generateRandomPassword } from 'selfpod-common/dist/common/snippets/flake-idgen';
+import { flakeId, generateRandomPassword } from 'chatbuk-common/dist/common/snippets/flake-idgen';
 import { RepositoryCollection } from '../repositories';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Auth } from 'selfpod-common/dist/services/auth/services';
-import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
-import { extractCountryCode } from 'selfpod-common/dist/common/snippets/strip-country-code';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Auth } from 'chatbuk-common/dist/services/auth/services';
+import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { extractCountryCode } from 'chatbuk-common/dist/common/snippets/strip-country-code';
 
 export class AppUser extends AggregateRoot {
   id: string;

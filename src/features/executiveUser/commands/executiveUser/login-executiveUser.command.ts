@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Auth } from 'selfpod-common/dist/services/auth/services';
-import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
-import { ExecutiveStatus } from 'selfpod-common/dist/common/utils/constants';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Auth } from 'chatbuk-common/dist/services/auth/services';
+import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { ExecutiveStatus } from 'chatbuk-common/dist/common/utils/constants';
 import { ExecutiveUser } from '../../models/executiveUser.model';
 
 export class ExecutiveUserLoginCommand {
@@ -30,7 +30,6 @@ export class ExecutiveUserLoginHandler
       { ...command.dto }
     );
     var executive = await this.repos.executiveUserModel.findOne({ authUser: state.authUser.id })
-    await user.updateWorkerStatus({ status: ExecutiveStatus.AVAILABLE, executiveCode: executive.executive_code });
     return { ...state, executive_code: executive.executive_code };
   }
 }

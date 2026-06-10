@@ -1,8 +1,8 @@
 import { QueryBus } from '@nestjs/cqrs';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Users } from 'selfpod-common/dist/services/users/services';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Users } from 'chatbuk-common/dist/services/users/services';
 import { GetOneExecutiveUserQuery } from '../queries/executiveUser/get-one-executiveUser.query';
 import { GetManyExecutiveUserQuery } from '../queries/executiveUser/get-many-executiveUsers.query';
 import { GetExecutiveUserCountQuery } from '../queries/executiveUser/get-executiveUser-count.query';

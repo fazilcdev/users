@@ -1,11 +1,13 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { AppUser } from '../../models/appUser.model';
 
 export class CreateAppUserCommand {
   constructor(readonly dto: any) { }
 }
+
+import { EncryptionService } from 'chatbuk-common/dist/features/encryption/encryption.service';
 
 @CommandHandler(CreateAppUserCommand)
 export class CreateAppUserHandler implements ICommandHandler<CreateAppUserCommand> {
@@ -13,6 +15,7 @@ export class CreateAppUserHandler implements ICommandHandler<CreateAppUserComman
     private readonly publisher: EventPublisher,
     private readonly repos: RepositoryCollection,
     private readonly nats: NatsClientService,
+    private readonly encryptionService: EncryptionService,
   ) { }
 
   async execute(command: CreateAppUserCommand): Promise<any> {
@@ -20,7 +23,17 @@ export class CreateAppUserHandler implements ICommandHandler<CreateAppUserComman
       new AppUser(this.repos),
     );
     appUser.nats = this.nats;
-    const state = await appUser.create(command.dto);
+
+    // Generate and Encrypt Per-User Key
+    const userKey = this.encryptionService.generateUserKey();
+    const encryptedDataKey = this.encryptionService.encryptKey(userKey);
+
+    const payload = {
+      ...command.dto,
+      encryptedDataKey
+    };
+
+    const state = await appUser.create(payload);
     appUser.commit();
     return state;
   }

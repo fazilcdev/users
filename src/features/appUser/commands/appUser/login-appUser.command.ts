@@ -1,9 +1,10 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Auth } from 'selfpod-common/dist/services/auth/services';
-import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Auth } from 'chatbuk-common/dist/services/auth/services';
+import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { Mobileverification } from '../../models/mobileverification.model';
+import { EncryptionService } from 'chatbuk-common/dist/features/encryption/encryption.service';
 
 export class AppUserLoginCommand {
   constructor(readonly dto: any) { }
@@ -15,7 +16,8 @@ export class AppUserLoginHandler
   constructor(
     private readonly publisher: EventPublisher,
     private readonly repos: RepositoryCollection,
-    private readonly nats: NatsClientService
+    private readonly nats: NatsClientService,
+    private readonly encryptionService: EncryptionService
   ) { }
 
   async execute(command: AppUserLoginCommand): Promise<any> {
@@ -29,7 +31,13 @@ export class AppUserLoginHandler
       Auth.LoginCommand,
       { ...command.dto, password: process.env.SECRET_PASS }
     );
-    var customer = await this.repos.appUserModel.findOne({ authUser: state.authUser.id })
-    return { ...state, customer_code: customer.customer_code };
+    const customer = await this.repos.appUserModel.findOne({ authUser: state.authUser.id }).select('+encryptedDataKey');
+
+    let userKey = null;
+    if (customer && customer.encryptedDataKey) {
+      userKey = this.encryptionService.decryptKey(customer.encryptedDataKey);
+    }
+
+    return { ...state, customer_code: customer.customer_code, userKey };
   }
 }

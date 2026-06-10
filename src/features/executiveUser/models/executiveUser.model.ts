@@ -1,9 +1,9 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { flakeId } from 'selfpod-common/dist/common/snippets/flake-idgen';
+import { flakeId } from 'chatbuk-common/dist/common/snippets/flake-idgen';
 import { RepositoryCollection } from '../repositories';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Auth } from 'selfpod-common/dist/services/auth/services';
-import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Auth } from 'chatbuk-common/dist/services/auth/services';
+import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { entityStateChangedEvent } from '../events/executiveUser.event';
 
 export class ExecutiveUser extends AggregateRoot {
@@ -23,7 +23,7 @@ export class ExecutiveUser extends AggregateRoot {
       RPCServices.Auth,
       Auth.GetOneAuthUserQuery,
       {
-        condition: { mobile: data.mobile },
+        condition: { email: data.email },
         fieldsMap: {},
       },
     );
@@ -41,7 +41,7 @@ export class ExecutiveUser extends AggregateRoot {
         email: data.email,
         mobile: data.mobile,
         password: data.password,
-        roles: ['ExecutiveUser'],
+        roles: ['AdminUser'],
       },
     );
 
@@ -64,10 +64,6 @@ export class ExecutiveUser extends AggregateRoot {
     return state;
   }
 
-  async updateRating(dto) {
-    let user = await this.repos.executiveUserModel.findOne({ authUser: dto.authUser })
-    return user
-  }
 
   async update(data: any, tokenUser: any) {
 
@@ -97,7 +93,6 @@ export class ExecutiveUser extends AggregateRoot {
     } else {
       try {
         const d = {
-          type: appUser.account_type,
           status: appUser.status,
           executiveCode: appUser.executive_code,
           executiveStatus: appUser.status,
@@ -124,36 +119,11 @@ export class ExecutiveUser extends AggregateRoot {
     return resp;
   }
 
-  async updateWorkerStatus(data) {
-    const resp = await this.repos.executiveUserModel.findOneAndUpdate(
-      { executive_code: data.executiveCode },
-      { status: data.status },
-      { new: true },
-    );
-    const state = await this.repos.executiveUserModel.findOne({ executive_code: data.executiveCode })
-    try {
-      const d = {
-        type: state.account_type,
-        status: data.status,
-        executiveCode: state.executive_code,
-        executiveStatus: data.status,
-        og2: 'update-worker'
-      }
-    } catch (e) {
-      console.log(e)
-    }
-
-    return state;
-  }
-
   async delete(tokenUser: any) {
     const resp = await this.repos.executiveUserModel.findById(this.id)
     await this.repos.executiveUserModel.deleteById(this.id);
 
     let state = await this.repos.executiveUserModel.findOneDeleted({ _id: this.id });
-    // TwilioWorkspaceClient
-    //              .workers(resp.workerSid)
-    //              .remove();
     let auditLog = {
       command: 'DeleteExecutiveUserCommand',
       entity: 'ExecutiveUser',
@@ -166,25 +136,17 @@ export class ExecutiveUser extends AggregateRoot {
     return state;
   }
 
-  async attach(data) {
-    let resp = await this.repos.executiveUserModel.findByIdAndUpdate(
-      this.id,
-      { $addToSet: { branches: data } },
-      { new: true },
-    );
-    return resp;
-  }
 
   async updatePassword(dto) {
 
-    let condition = { code: dto.code, mobileNo: dto.mobileNo };
+    let condition = { code: dto.code, email: dto.email };
     let user: any = await this.repos.mobileverificationModel.findOne(condition);
     if (!user) throw new Error('invalid_verification');
 
     let authUser = await this.nats.sendSync(
       RPCServices.Auth,
       Auth.GetOneAuthUserQuery,
-      { condition: { mobile: user.mobileNo } },
+      { condition: { email: user.email } },
     );
     if (!authUser) throw new Error('user_doesnt_exist');
     let updatedPassword = await this.nats.sendSync(
@@ -210,6 +172,5 @@ export class ExecutiveUser extends AggregateRoot {
       user_code_number = parseInt(user.executive_code.replace(prefix, '')) + 1
     }
     return prefix + Date.now()
-    return prefix + user_code_number
   }
 }

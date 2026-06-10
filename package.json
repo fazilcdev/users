@@ -31,6 +31,9 @@
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/platform-fastify": "^11.1.3",
     "axios": "^1.13.2",
+    "chatbuk-common": "file:../common",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
     "dotenv": "^16.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.0",
@@ -38,8 +41,7 @@
     "nodemailer": "^7.0.12",
     "reflect-metadata": "^0.1.14",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.8.2",
-    "selfpod-common": "file:../common"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",

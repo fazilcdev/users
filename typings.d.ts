@@ -36,5 +36,5 @@ declare module 'mongoose' {
 }
 
 import mongoose = require('mongoose');
-import { SchemaPlus } from 'selfpod-common/dist/common/mongodb/schema-plus';
+import { SchemaPlus } from 'chatbuk-common/dist/common/mongodb/schema-plus';
 declare function _(schema: SchemaPlus): void;

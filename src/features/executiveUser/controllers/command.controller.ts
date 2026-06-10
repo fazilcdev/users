@@ -1,15 +1,13 @@
 import { CommandBus } from '@nestjs/cqrs';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Users } from 'selfpod-common/dist/services/users/services';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Users } from 'chatbuk-common/dist/services/users/services';
 import { CreateExecutiveUserCommand } from '../commands/executiveUser/create-executiveUser.command';
 import { UpdateExecutiveUserCommand } from '../commands/executiveUser/update-executiveUser.command';
 import { DeleteExecutiveUserCommand } from '../commands/executiveUser/delete-executiveUser.command';
 import { UpdateExecutiveUserPasswordCommand } from '../commands/executiveUser/update-executiveUser-password.command';
 import { ExecutiveUserLoginCommand } from '../commands/executiveUser/login-executiveUser.command';
-import { UpdateExecutiveStatusCommand } from '../commands/executiveUser/update-worker-status.command';
-import { UpdateExecutiveUserRatingCommand, UpdateExecutiveUserRatingHandler } from '../commands/executiveUser/update-executive-rating.command';
 
 @Controller()
 export class CommandController {
@@ -53,25 +51,6 @@ export class CommandController {
         throw new RpcException(e.message);
       });
   }
-
-  @MessagePattern({ service: RPCServices.Users, cmd: Users.UpdateExecuticeStatusCommand })
-  async updateExecutiveStatus(dto: any) {
-    return await this.commandBus
-      .execute(new UpdateExecutiveStatusCommand(dto))
-      .catch(e => {
-        throw new RpcException(e.message);
-      });
-  }
-
-  @MessagePattern({ service: RPCServices.Users, cmd: Users.UpdateExecutiveUserRatingCommand })
-  async updateExecutiveRating(dto: any) {
-    return await this.commandBus
-      .execute(new UpdateExecutiveUserRatingCommand(dto))
-      .catch(e => {
-        throw new RpcException(e.message);
-      });
-  }
-
 
   @MessagePattern({ service: RPCServices.Users, cmd: Users.DeleteExecutiveUserCommand })
   async deleteAppUser(dto: any) {

@@ -1,6 +1,6 @@
 import { QueryHandler, IQueryHandler } from "@nestjs/cqrs";
 import { RepositoryCollection } from "../../repositories";
-import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
+import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
 
 export class GetMobileVerificationsCountQuery {
   constructor(

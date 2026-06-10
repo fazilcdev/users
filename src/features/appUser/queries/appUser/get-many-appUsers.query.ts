@@ -1,10 +1,10 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { RepositoryCollection } from '../../repositories';
-import { GqlBuildCondition } from 'selfpod-common/dist/common/snippets/gql-build-condition';
-import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
-import { GqlFieldsmapPopulate } from 'selfpod-common/dist/common/snippets/gql-fieldsmap-populate';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Auth } from 'selfpod-common/dist/services/auth/services';
+import { GqlBuildCondition } from 'chatbuk-common/dist/common/snippets/gql-build-condition';
+import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { GqlFieldsmapPopulate } from 'chatbuk-common/dist/common/snippets/gql-fieldsmap-populate';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Auth } from 'chatbuk-common/dist/services/auth/services';
 
 export class GetManyAppUserQuery {
   constructor(
