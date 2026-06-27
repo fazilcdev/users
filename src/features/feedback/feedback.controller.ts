@@ -14,4 +14,25 @@ export class FeedbackController {
       throw new RpcException(e.message);
     });
   }
+
+  @MessagePattern({ service: RPCServices.Users, cmd: Users.GetManyFeedbacksQuery })
+  async getManyFeedbacks(query: any) {
+    return await this.feedbackService.getMany(query).catch((e) => {
+      throw new RpcException(e.message);
+    });
+  }
+
+  @MessagePattern({ service: RPCServices.Users, cmd: Users.GetFeedbacksCountQuery })
+  async getFeedbacksCount(query: any) {
+    return await this.feedbackService.getCount(query).catch((e) => {
+      throw new RpcException(e.message);
+    });
+  }
+
+  @MessagePattern({ service: RPCServices.Users, cmd: Users.UpdateFeedbackStatusCommand })
+  async updateFeedbackStatus(dto: any) {
+    return await this.feedbackService.updateStatus(dto).catch((e) => {
+      throw new RpcException(e.message);
+    });
+  }
 }
